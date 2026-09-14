@@ -71,6 +71,13 @@ const testimonials = [
   { initials: "LC", name: "Leo Cruz", role: "Host · 2.1M", quote: "I finally have an editing team that can match the pace in my head—and deliver before the trend moves on.", metric: "+410K followers" },
 ];
 
+const socialLinks = [
+  { Icon: Instagram, label: "Instagram", href: "#top" },
+  { Icon: Youtube, label: "YouTube", href: "#top" },
+  { Icon: Linkedin, label: "LinkedIn", href: "#top" },
+  { Icon: Mail, label: "Email", href: "mailto:hello@apexmedia.studio" },
+];
+
 function Index() {
   const [activeReel, setActiveReel] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -78,6 +85,7 @@ function Index() {
   const [comparison, setComparison] = useState(50);
   const [menuOpen, setMenuOpen] = useState(false);
   const [sent, setSent] = useState(false);
+  const currentReel = activeReel === null ? undefined : reels[activeReel];
 
   useEffect(() => {
     document.body.style.overflow = activeReel === null ? "" : "hidden";
@@ -228,20 +236,20 @@ function Index() {
         </div>
       </section>
 
-      <footer className="border-t border-border px-5 py-8 sm:px-8 lg:px-10"><div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 sm:flex-row"><div className="flex items-center gap-3"><span className="grid size-7 place-items-center rounded-sm bg-primary text-primary-foreground"><Film size={14}/></span><span className="text-xs font-extrabold tracking-[0.14em]">APEX/MEDIA</span></div><p className="text-[10px] text-muted-foreground">© 2026 Apex Media. Crafted frame by frame.</p><div className="flex gap-2">{[[Instagram,"Instagram"],[Youtube,"YouTube"],[Linkedin,"LinkedIn"],[Mail,"Email"]].map(([Icon,label])=><a key={String(label)} href={label === "Email" ? "mailto:hello@apexmedia.studio" : "#top"} aria-label={String(label)} className="grid size-9 place-items-center rounded-sm border border-border text-muted-foreground transition hover:border-primary hover:text-primary"><Icon size={15}/></a>)}</div></div></footer>
+      <footer className="border-t border-border px-5 py-8 sm:px-8 lg:px-10"><div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 sm:flex-row"><div className="flex items-center gap-3"><span className="grid size-7 place-items-center rounded-sm bg-primary text-primary-foreground"><Film size={14}/></span><span className="text-xs font-extrabold tracking-[0.14em]">APEX/MEDIA</span></div><p className="text-[10px] text-muted-foreground">© 2026 Apex Media. Crafted frame by frame.</p><div className="flex gap-2">{socialLinks.map(({ Icon, label, href })=><a key={label} href={href} aria-label={label} className="grid size-9 place-items-center rounded-sm border border-border text-muted-foreground transition hover:border-primary hover:text-primary"><Icon size={15}/></a>)}</div></div></footer>
 
-      {activeReel !== null && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-modal p-4 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label={`Playing ${reels[activeReel].title}`} onMouseDown={(e) => { if (e.currentTarget === e.target) setActiveReel(null); }}>
+      {activeReel !== null && currentReel && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-modal p-4 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label={`Playing ${currentReel.title}`} onMouseDown={(e) => { if (e.currentTarget === e.target) setActiveReel(null); }}>
           <StudioButton variant="icon" className="absolute right-4 top-4 z-10" onClick={() => setActiveReel(null)} aria-label="Close viewer"><X size={19}/></StudioButton>
           <div className="grid w-full max-w-4xl items-center gap-5 md:grid-cols-[auto_minmax(280px,370px)_auto]">
-            <StudioButton variant="icon" className="hidden md:inline-flex" onClick={() => setActiveReel((activeReel - 1 + reels.length) % reels.length)} aria-label="Previous reel"><ArrowLeft size={18}/></StudioButton>
+            <StudioButton variant="icon" className="hidden md:inline-flex" onClick={() => setActiveReel((current) => current === null ? 0 : (current - 1 + reels.length) % reels.length)} aria-label="Previous reel"><ArrowLeft size={18}/></StudioButton>
             <div className="relative mx-auto aspect-[9/16] h-[82vh] max-h-[760px] overflow-hidden rounded-md border border-border bg-surface shadow-cinema">
-              <img src={reels[activeReel].image} alt={reels[activeReel].title} width={768} height={1376} className={`h-full w-full object-cover ${isPlaying ? "ken-burns" : ""}`} />
+              <img src={currentReel.image} alt={currentReel.title} width={768} height={1376} className={`h-full w-full object-cover ${isPlaying ? "ken-burns" : ""}`} />
               <div className="absolute inset-0 bg-card-shade" />
               {!isPlaying && <button className="absolute inset-0 m-auto grid size-16 place-items-center rounded-full bg-primary text-primary-foreground" onClick={() => setIsPlaying(true)} aria-label="Play"><Play fill="currentColor" /></button>}
-              <div className="absolute inset-x-0 bottom-0 p-4"><div className="mb-4"><p className="text-lg font-bold">{reels[activeReel].title}</p><p className="mt-1 text-xs text-muted-foreground">{reels[activeReel].category} · {reels[activeReel].views} views</p></div><div className="mb-3 h-0.5 overflow-hidden bg-foreground/15"><span className={`block h-full bg-primary ${isPlaying ? "progress-line" : "w-1/3"}`} /></div><div className="flex items-center justify-between"><div className="flex gap-2"><StudioButton variant="icon" onClick={() => setIsPlaying(!isPlaying)} aria-label={isPlaying ? "Pause" : "Play"}>{isPlaying ? <Pause size={17}/> : <Play size={17}/>}</StudioButton><StudioButton variant="icon" onClick={() => setIsMuted(!isMuted)} aria-label={isMuted ? "Unmute" : "Mute"}>{isMuted ? <VolumeX size={17}/> : <Volume2 size={17}/>}</StudioButton></div><Maximize2 size={17}/></div></div>
+              <div className="absolute inset-x-0 bottom-0 p-4"><div className="mb-4"><p className="text-lg font-bold">{currentReel.title}</p><p className="mt-1 text-xs text-muted-foreground">{currentReel.category} · {currentReel.views} views</p></div><div className="mb-3 h-0.5 overflow-hidden bg-foreground/15"><span className={`block h-full bg-primary ${isPlaying ? "progress-line" : "w-1/3"}`} /></div><div className="flex items-center justify-between"><div className="flex gap-2"><StudioButton variant="icon" onClick={() => setIsPlaying(!isPlaying)} aria-label={isPlaying ? "Pause" : "Play"}>{isPlaying ? <Pause size={17}/> : <Play size={17}/>}</StudioButton><StudioButton variant="icon" onClick={() => setIsMuted(!isMuted)} aria-label={isMuted ? "Unmute" : "Mute"}>{isMuted ? <VolumeX size={17}/> : <Volume2 size={17}/>}</StudioButton></div><Maximize2 size={17}/></div></div>
             </div>
-            <StudioButton variant="icon" className="hidden md:inline-flex" onClick={() => setActiveReel((activeReel + 1) % reels.length)} aria-label="Next reel"><ArrowRight size={18}/></StudioButton>
+            <StudioButton variant="icon" className="hidden md:inline-flex" onClick={() => setActiveReel((current) => current === null ? 0 : (current + 1) % reels.length)} aria-label="Next reel"><ArrowRight size={18}/></StudioButton>
           </div>
         </div>
       )}
